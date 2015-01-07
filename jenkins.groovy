@@ -27,13 +27,13 @@ import groovy.json.JsonSlurper
 
 jenkinsConfig = {}
 
-// Users that can interact with different stages in the workflow
-testers = {}
-developers = {}
 deployers = {}
-branchName = ''
-
+testlink = {}
 branchName = 'master'
+StageNameCI = 'ci'
+StageNameProduction = 'production'
+watirGitUrl = ''
+
 interactive = true
 
 //+---------------- End of configurations
@@ -56,6 +56,12 @@ def stepBootStrap() {
       testers = jenkinsConfig['testers']
       developers = jenkinsConfig['developers']
       deployers = jenkinsConfig['deployers']
+
+      testlink = jenkinsConfig['testlink']
+      StageNameCI = jenkinsConfig['stage_name_ci']
+      StageNameProduction = jenkinsConfig['stage_name_production']
+      watirGitUrl = jenkinsConfig['watir_git_url']
+      branchName = 'master'
     }
   }
 
@@ -97,8 +103,7 @@ def stepSyncAndDeployCI() {
       dir('cap'){
         sh "ls"
         sh "bundle install --binstubs"
-        sh "./bin/cap ${StageNameCI} -T"
-        //sh "./bin/cap ${StageNameCI} typo3:sync_n_deploy"
+        sh "./bin/cap ${StageNameCI} typo3:sync_n_deploy"
       }
     }
 
@@ -144,11 +149,11 @@ def stepTestCI() {
 
       //ask which tests to run
       def params = []
-      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'IE Watir tests', name: 'IE Watir test'])
-      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Firefox OSX Watir tests', name: 'Firefox OSX Watir test'])
-      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Firefox Linux Watir tests', name: 'Firefox Linux Watir test'])
+      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'IE Watir tests', name: 'IE test'])
+      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Firefox OSX Watir tests', name: 'FFOSX test'])
+      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Firefox Linux Watir tests', name: 'FFLNX test'])
       params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'PHP Unit tests', name: 'Unit test'])
-      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Behat tests', name: 'Behat test'])
+//      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Behat tests', name: 'Behat test'])
       params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Files syntax check', name: 'Syntax test'])
       def moveOptions = ''
       moveOptions += 'Continue with stepTestCI\n'
@@ -232,15 +237,15 @@ def startTests(actions) {
       startSyntaxTests(branchName)
     }
   }, watirIE: {
-    if (actions['Behat test']) {
-      startWatirTests('IE')
+    if (actions['IE test']) {
+//      startWatirTests('IE')
     }
   }, watirFFOSX: {
-    if (actions['Syntax test']) {
+    if (actions['FFOSX test']) {
       startWatirTests('FFOSX')
     }
   }, watirFXLinux: {
-    if (actions['Syntax test']) {
+    if (actions['FFLNX test']) {
       startWatirTests('master')
     }
   }
@@ -262,7 +267,7 @@ def startWatirTests(browserType) {
 
   node(browserType) {
     sh "mkdir -p test"
-    dir('test'){
+    dir('test') {
       git url: watirGitUrl
       //Testlink connection
       //TL prject
@@ -275,7 +280,7 @@ def startWatirTests(browserType) {
 
       sh "bundle install --deployment"
       sh "rm -f spec/reports/*.xml"
-  }
+    }
   }
 }
 
