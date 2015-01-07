@@ -93,8 +93,8 @@ def stepSyncAndDeployCI() {
 
   while (stageAction) {
 
-    dir('cap'){
-      node {
+    node {
+      dir('cap'){
         sh "ls"
         sh "bundle install --binstubs"
         sh "./bin/cap ${StageNameCI} -T"
@@ -188,8 +188,8 @@ def stepTestCI() {
 
 def stepDeployProduction() {
 
-  dir('cap'){
-    node {
+  node {
+    dir('cap'){
       sh "ls"
         sh "bundle install --binstubs"
         sh "./bin/cap ${StageNameProduction} -T"
