@@ -28,7 +28,6 @@ import groovy.json.JsonSlurper
 jenkinsConfig = {}
 
 deployers = {}
-testlink = {}
 branchName = 'master'
 StageNameCI = 'ci'
 StageNameProduction = 'production'
@@ -57,7 +56,6 @@ def stepBootStrap() {
       developers = jenkinsConfig['developers']
       deployers = jenkinsConfig['deployers']
 
-      testlink = jenkinsConfig['testlink']
       StageNameCI = jenkinsConfig['stage_name_ci']
       StageNameProduction = jenkinsConfig['stage_name_production']
       watirGitUrl = jenkinsConfig['watir_git_url']
@@ -153,7 +151,6 @@ def stepTestCI() {
       params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Firefox OSX Watir tests', name: 'FFOSX test'])
       params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Firefox Linux Watir tests', name: 'FFLNX test'])
       params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'PHP Unit tests', name: 'Unit test'])
-//      params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Behat tests', name: 'Behat test'])
       params.add([$class: 'hudson.model.BooleanParameterDefinition', defaultValue: false, description: 'Files syntax check', name: 'Syntax test'])
       def moveOptions = ''
       moveOptions += 'Continue with stepTestCI\n'
@@ -192,7 +189,6 @@ def stepTestCI() {
 }
 
 def stepDeployProduction() {
-
   node {
     dir('cap'){
       sh "ls"
@@ -207,6 +203,7 @@ def stepDeployProduction() {
 
 def stepTestProduction() {
   echo 'stepTestProduction'
+  startWatirTests('master','plan_production')
 }
 
 def askQuestion(stageType,params,moveOptions) {
@@ -229,12 +226,8 @@ def startTests(actions) {
       startUnitTests(branchName)
     }
   }, filesSyntax: {
-    if (actions['Behat test']) {
-      startBehatTests(branchName)
-    }
-  }, behatTests: {
     if (actions['Syntax test']) {
-      startSyntaxTests(branchName)
+      startBehatTests(branchName)
     }
   }, watirIE: {
     if (actions['IE test']) {
@@ -255,31 +248,22 @@ def startUnitTests(branchName) {
     echo '[Action] Unit testing...'
 }
 
-def startBehatTests(branchName) {
-    echo '[Action] Behat testing...'
-}
-
 def startSyntaxTests(branchName) {
     echo '[Action] Checking for syntax errrors...'
 }
 
-def startWatirTests(browserType) {
+def startWatirTests(browserType,plan='plan_ci') {
 
   node(browserType) {
     sh "mkdir -p test"
     dir('test') {
       git url: watirGitUrl
-      //Testlink connection
-      //TL prject
-      //TL plan
-      //TL BuildPrefixName
-      //TL Custom Fields
-      //TL foreach found test 
-      //      bundle exec rake testlink:spec SPEC_OPTS="-e $TESTLINK_TESTCASE_RSPEC_CASE_ID"
-      //      junit get results spec/reports/*.xml
 
       sh "bundle install --deployment"
       sh "rm -f spec/reports/*.xml"
+      sh "bundle exec rake testlink:"+plan
+
+      //junit get results spec/reports/*.xml
     }
   }
 }
