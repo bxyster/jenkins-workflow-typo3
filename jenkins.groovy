@@ -193,8 +193,8 @@ def stepDeployProduction() {
     dir('cap'){
       sh "ls"
         sh "bundle install --binstubs"
-        sh "./bin/cap ${StageNameProduction} -T"
-        //sh "./bin/cap ${StageNameProduction} typo3:deploy"
+        //sh "./bin/cap ${StageNameProduction} -T"
+        sh "./bin/cap ${StageNameProduction} typo3:deploy"
     }
   }
 
