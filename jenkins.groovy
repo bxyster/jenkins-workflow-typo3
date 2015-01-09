@@ -67,18 +67,16 @@ def stepBootStrap() {
 
     def params = []
     def moveOptions = ''
+    moveOptions += 'Run full deployment workflow\n'
     moveOptions += 'Single run stepSyncAndDeployCI\n'
     moveOptions += 'Single run stepTestCI\n'
-    moveOptions += 'Run full deployment workflow\n'
 
     def stepAction = askQuestion('stepBootStrap',params,moveOptions)
 
     if (stepAction['Move to'] == 'Single run stepSyncAndDeployCI') {
-      interactive = false
       stepSyncAndDeployCI()
     }
     else if(stepAction['Move to'] == 'Single run stepTestCI') {
-      interactive = false
       stepTestCI()
     }
     else if(stepAction['Move to'] == 'Run full deployment workflow') {
