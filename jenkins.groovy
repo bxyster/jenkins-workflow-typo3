@@ -274,7 +274,7 @@ def startWatirTests(browserType,plan='plan_ci') {
       sh "bundle exec rake testlink:"+plan
 
       step([$class: 'JUnitResultArchiver', testResults: 'reports/*.xml'])
-      step([$class: 'ArtifactArchiver', artifacts: 'screenshots/*.png', fingerprint: false])
+      step([$class: 'ArtifactArchiver', artifacts: 'screenshots/**/*.png', fingerprint: false])
     }
   }
 }
