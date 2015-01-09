@@ -69,15 +69,24 @@ def stepBootStrap() {
     def moveOptions = ''
     moveOptions += 'Run full deployment workflow\n'
     moveOptions += 'Single run stepSyncAndDeployCI\n'
-    moveOptions += 'Single run stepTestCI\n'
+    moveOptions += 'Start at stepTestCI\n'
+    moveOptions += 'Start at stepDeployProduction\n'
+    moveOptions += 'Start at stepTestProduction\n'
 
     def stepAction = askQuestion('stepBootStrap',params,moveOptions)
 
     if (stepAction['Move to'] == 'Single run stepSyncAndDeployCI') {
       stepSyncAndDeployCI()
+      interactive = false
     }
-    else if(stepAction['Move to'] == 'Single run stepTestCI') {
+    else if(stepAction['Move to'] == 'Start at stepTestCI') {
       stepTestCI()
+    }
+    else if(stepAction['Move to'] == 'Start at stepDeployProduction') {
+      stepDeployProduction()
+    }
+    else if(stepAction['Move to'] == 'Start at stepTestProduction') {
+      stepTestProduction()
     }
     else if(stepAction['Move to'] == 'Run full deployment workflow') {
       stepSyncAndDeployCI()
@@ -258,10 +267,14 @@ def startWatirTests(browserType,plan='plan_ci') {
       git url: watirGitUrl
 
       sh "bundle install --deployment"
-      sh "rm -f spec/reports/*.xml"
+      sh "mkdir -p reports"
+      sh "mkdir -p screenshots"
+      sh "rm -f reports/*.xml"
+      sh "rm -f screenshots/*.png"
       sh "bundle exec rake testlink:"+plan
 
-      //junit get results spec/reports/*.xml
+      step([$class: 'JUnitResultArchiver', testResults: 'reports/*.xml'])
+      step([$class: 'ArtifactArchiver', artifacts: 'screenshots/*.png', fingerprint: false])
     }
   }
 }
