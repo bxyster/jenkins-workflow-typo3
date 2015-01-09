@@ -268,7 +268,7 @@ def startWatirTests(browserType,plan='plan_ci') {
 
       sh "bundle install --deployment"
       sh "mkdir -p reports"
-      sh "mkdir -p screenshots"
+      sh "mkdir -p screenshots/tmp"
       sh "rm -f reports/*.xml"
       sh "rm -f screenshots/*.png"
       sh "bundle exec rake testlink:"+plan
