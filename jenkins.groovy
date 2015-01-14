@@ -214,7 +214,7 @@ def stepTestProduction() {
 }
 
 def askQuestion(stageType,params,moveOptions) {
-
+    mail()
     params.add([$class: 'hudson.model.ChoiceParameterDefinition', choices: moveOptions, description: 'Next step action', name: 'Move to'])
     def stepAction = input id: '7fd85613e7e068ad4f3bec8e717f2bc8', message: 'What would you like to do in ' + stageType + '?', ok: 'Proceed', parameters: params
 
@@ -277,6 +277,10 @@ def startWatirTests(browserType,plan='plan_ci') {
       step([$class: 'ArtifactArchiver', artifacts: 'screenshots/**/*.png', fingerprint: false])
     }
   }
+}
+
+def mail() {
+    mail subject: "Jenkins Input Needed", recipients: 'pim@lingewoud.nl'
 }
 
 return this
