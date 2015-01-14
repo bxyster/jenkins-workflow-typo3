@@ -214,7 +214,11 @@ def stepTestProduction() {
 }
 
 def askQuestion(stageType,params,moveOptions) {
-    sh 'echo "Jenkins Input Needed" | mail -s "Jenkins Input Needed" pim@lingewoud.nl'
+
+    node('master') {
+      sh 'echo "Jenkins Input Needed" | mail -s "Jenkins Input Needed" pim@lingewoud.nl'
+    }
+
     params.add([$class: 'hudson.model.ChoiceParameterDefinition', choices: moveOptions, description: 'Next step action', name: 'Move to'])
     def stepAction = input id: '7fd85613e7e068ad4f3bec8e717f2bc8', message: 'What would you like to do in ' + stageType + '?', ok: 'Proceed', parameters: params
 
