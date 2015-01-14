@@ -280,7 +280,7 @@ def startWatirTests(browserType,plan='plan_ci') {
 }
 
 def mail() {
-    mail subject: "Jenkins Input Needed", recipients: 'pim@lingewoud.nl'
+    sh 'echo "Jenkins Input Needed" | mail -s "Jenkins Input Needed" pim@lingewoud.nl'
 }
 
 return this
