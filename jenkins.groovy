@@ -34,6 +34,7 @@ branchName = 'master'
 StageNameCI = 'ci'
 StageNameProduction = 'production'
 watirGitUrl = ''
+emailTo = ''
 
 interactive = true
 
