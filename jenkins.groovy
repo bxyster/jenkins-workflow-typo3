@@ -37,6 +37,18 @@ interactive = true
 
 //+---------------- End of configurations
 
+def getBuildUserMailAddress() {
+  def item = hudson.model.Hudson.instance.getItem(env.JOB_NAME) 
+  def build = item.getLastBuild()
+  def cause = build.getCause(hudson.model.Cause.UserIdCause.class);
+  def id = cause.getUserId()
+  User u = User.get(id);
+  def umail = u.getProperty(Mailer.UserProperty.class)
+  return umail.getAddress()
+}
+
+
+
 def stepBootStrap() {
 
   node {
@@ -55,6 +67,8 @@ def stepBootStrap() {
       testers = jenkinsConfig['testers']
       developers = jenkinsConfig['developers']
       deployers = jenkinsConfig['deployers']
+
+      def emailTo = getBuildUserMailAddress()
 
       StageNameCI = jenkinsConfig['stage_name_ci']
       StageNameProduction = jenkinsConfig['stage_name_production']
@@ -216,7 +230,7 @@ def stepTestProduction() {
 def askQuestion(stageType,params,moveOptions) {
 
     node('master') {
-      sh 'echo "Jenkins Input Needed" | mail -s "Jenkins Input Needed" pim@lingewoud.nl'
+      sh "echo 'Jenkins Input Needed' | mail -s 'Jenkins Input Needed' ${emailTo}"
     }
 
     params.add([$class: 'hudson.model.ChoiceParameterDefinition', choices: moveOptions, description: 'Next step action', name: 'Move to'])
