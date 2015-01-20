@@ -20,8 +20,10 @@
   TODO
   - implement submitter for more security
 */
-
+import hudson.model.User
 import groovy.json.JsonSlurper
+import hudson.tasks.Mailer
+
 
 //+---------------- End of pre-conditions
 
@@ -38,11 +40,11 @@ interactive = true
 //+---------------- End of configurations
 
 def getBuildUserMailAddress() {
-  def item = hudson.model.Hudson.instance.getItem(env.JOB_NAME) 
+  def item = hudson.model.Hudson.instance.getItem(env.JOB_NAME)
   def build = item.getLastBuild()
-  def cause = build.getCause(hudson.model.Cause.UserIdCause.class);
+  def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
   def id = cause.getUserId()
-  User u = User.get(id);
+  User u = User.get(id)
   def umail = u.getProperty(Mailer.UserProperty.class)
   return umail.getAddress()
 }
