@@ -34,7 +34,7 @@ branchName = 'master'
 StageNameCI = 'ci'
 StageNameProduction = 'production'
 watirGitUrl = ''
-emailTo = ''
+def emailTo = ''
 
 interactive = true
 
@@ -71,7 +71,7 @@ def stepBootStrap() {
       developers = jenkinsConfig['developers']
       deployers = jenkinsConfig['deployers']
 
-      def emailTo = getBuildUserMailAddress()
+      emailTo = getBuildUserMailAddress()
 
       StageNameCI = jenkinsConfig['stage_name_ci']
       StageNameProduction = jenkinsConfig['stage_name_production']
