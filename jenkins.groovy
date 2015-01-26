@@ -216,9 +216,9 @@ def stepDeployProduction() {
   node {
     dir('cap'){
       sh "ls"
-        sh "bundle install --binstubs"
+        sh "rvm ruby-2.1.5 exec bundle install --binstubs"
         //sh "./bin/cap ${StageNameProduction} -T"
-        sh "./bin/cap ${StageNameProduction} typo3:deploy"
+        sh "rvm ruby-2.1.5 exec bundle exec cap ${StageNameProduction} typo3:deploy"
     }
   }
 
@@ -287,12 +287,12 @@ def startWatirTests(browserType,plan='plan_ci') {
     dir('test') {
       git url: watirGitUrl
 
-      sh "bundle install --deployment"
+      sh "rvm ruby-2.1.5 exec bundle install --deployment"
       sh "mkdir -p reports"
       sh "mkdir -p screenshots/tmp"
       sh "rm -f reports/*.xml"
       sh "rm -f screenshots/*.png"
-      sh "bundle exec rake testlink:"+plan
+      sh "rvm ruby-2.1.5 exec bundle exec rake testlink:"+plan
 
       step([$class: 'JUnitResultArchiver', testResults: 'reports/*.xml'])
       step([$class: 'ArtifactArchiver', artifacts: 'screenshots/**/*.png', fingerprint: false])
