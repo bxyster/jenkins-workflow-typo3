@@ -35,6 +35,7 @@ StageNameCI = 'ci'
 StageNameProduction = 'production'
 watirGitUrl = ''
 def emailTo = ''
+def rvmCommand= '~/.rvm/bin/rvm ruby-2.1.5 exec'
 
 interactive = true
 
@@ -124,8 +125,8 @@ def stepSyncAndDeployCI() {
     node {
       dir('cap'){
         sh "ls"
-        sh "bundle install --binstubs"
-        sh "./bin/cap ${StageNameCI} typo3:sync_n_deploy"
+        sh "${rvmCommand} bundle install --binstubs"
+        sh "${rvmCommand} bundle exec cap ${StageNameCI} typo3:sync_n_deploy"
       }
     }
 
@@ -216,9 +217,8 @@ def stepDeployProduction() {
   node {
     dir('cap'){
       sh "ls"
-        sh "rvm ruby-2.1.5 exec bundle install --binstubs"
-        //sh "./bin/cap ${StageNameProduction} -T"
-        sh "rvm ruby-2.1.5 exec bundle exec cap ${StageNameProduction} typo3:deploy"
+        sh "${rvmCommand} bundle install --binstubs"
+        sh "${rvmCommand} bundle exec cap ${StageNameProduction} typo3:deploy"
     }
   }
 
@@ -287,12 +287,12 @@ def startWatirTests(browserType,plan='plan_ci') {
     dir('test') {
       git url: watirGitUrl
 
-      sh "rvm ruby-2.1.5 exec bundle install --deployment"
+      sh "${rvmCommand} bundle install --deployment"
       sh "mkdir -p reports"
       sh "mkdir -p screenshots/tmp"
       sh "rm -f reports/*.xml"
       sh "rm -f screenshots/*.png"
-      sh "rvm ruby-2.1.5 exec bundle exec rake testlink:"+plan
+      sh "${rvmCommand} bundle exec rake testlink:"+plan
 
       step([$class: 'JUnitResultArchiver', testResults: 'reports/*.xml'])
       step([$class: 'ArtifactArchiver', artifacts: 'screenshots/**/*.png', fingerprint: false])
