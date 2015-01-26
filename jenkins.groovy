@@ -35,7 +35,7 @@ StageNameCI = 'ci'
 StageNameProduction = 'production'
 watirGitUrl = ''
 def emailTo = ''
-def rvmCommand= '~/.rvm/bin/rvm ruby-2.1.5 exec'
+def rvmCommand= '/var/lib/jenkins/.rvm/bin/rvm ruby-2.1.5 exec'
 
 interactive = true
 
@@ -287,6 +287,7 @@ def startWatirTests(browserType,plan='plan_ci') {
     dir('test') {
       git url: watirGitUrl
 
+      sh "ls"
       sh "${rvmCommand} bundle install --deployment"
       sh "mkdir -p reports"
       sh "mkdir -p screenshots/tmp"
