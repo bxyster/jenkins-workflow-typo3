@@ -233,7 +233,7 @@ def stepTestProduction() {
 def askQuestion(stageType,params,moveOptions) {
 
     node('master') {
-      sh "echo 'Please check: ${env['BUILD_URL']}/input/' | mail -s 'Jenkins job \"${env['JOB_NAME']}#${env['BUILD_NUMBER']}\" needs input' ${emailTo}"
+      sh "echo 'Please check: ${env['BUILD_URL']}/input/' | mail -s 'Job ${env['JOB_NAME']}#${env['BUILD_NUMBER']}@${stageType} needs input' ${emailTo}"
     }
 
     params.add([$class: 'hudson.model.ChoiceParameterDefinition', choices: moveOptions, description: 'Next step action', name: 'Move to'])
@@ -287,9 +287,6 @@ def startWatirTests(browserType,plan='plan_ci') {
     dir('test') {
       git url: watirGitUrl
 
-      sh "ls"
-      print "${rvmCommand} bundle install --deployment"
-      sh "ls"
       sh "${rvmCommand} bundle install --deployment"
       sh "mkdir -p reports"
       sh "mkdir -p screenshots/tmp"
