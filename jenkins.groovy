@@ -288,6 +288,7 @@ def startWatirTests(browserType,plan='plan_ci') {
       git url: watirGitUrl
 
       sh "ls"
+      print "${rvmCommand} bundle install --deployment"
       sh "${rvmCommand} bundle install --deployment"
       sh "mkdir -p reports"
       sh "mkdir -p screenshots/tmp"
