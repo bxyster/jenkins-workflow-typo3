@@ -51,7 +51,12 @@ def getBuildUserMailAddress() {
   return umail.getAddress()
 }
 
-
+def getUserId() {
+  def item = hudson.model.Hudson.instance.getItem(env.JOB_NAME)
+  def build = item.getLastBuild()
+  def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
+  return cause.getUserId()
+}
 
 def stepBootStrap() {
 
@@ -233,7 +238,7 @@ def stepTestProduction() {
 def askQuestion(stageType,params,moveOptions) {
 
     node('master') {
-      sh "echo 'Please check: ${env['BUILD_URL']}/input/' | mail -s 'Job ${env['JOB_NAME']}#${env['BUILD_NUMBER']}@${stageType} needs input' ${emailTo}"
+      sh "echo \"Hello ${getUserId()},\n\nThe Jenkins job ${env['JOB_NAME']}#${env['BUILD_NUMBER']}@${stageType} needs your input. Open ${env['BUILD_URL']}input/ for more informations.\n\nServing you the best I can,\nMr. Jenkins\n\"  | mail -s 'Job ${env['JOB_NAME']}#${env['BUILD_NUMBER']}@${stageType} needs input' ${emailTo}"
     }
 
     params.add([$class: 'hudson.model.ChoiceParameterDefinition', choices: moveOptions, description: 'Next step action', name: 'Move to'])
