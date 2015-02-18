@@ -60,6 +60,19 @@ def getUserId() {
 
 def stepBootStrap() {
 
+  if(interactive) {
+
+    def params = []
+      def moveOptions = ''
+      moveOptions += 'Run full deployment workflow\n'
+      moveOptions += 'Single run stepSyncAndDeployCI\n'
+      moveOptions += 'Start at stepTestCI\n'
+      moveOptions += 'Start at stepDeployProduction\n'
+      moveOptions += 'Start at stepTestProduction\n'
+
+      def stepAction = askQuestion('stepBootStrap',params,moveOptions)
+  }
+
   node {
     sh "mkdir -p cap"
     sh "mkdir -p src"
@@ -88,19 +101,9 @@ def stepBootStrap() {
 
   if(interactive) {
 
-    def params = []
-    def moveOptions = ''
-    moveOptions += 'Run full deployment workflow\n'
-    moveOptions += 'Single run stepSyncAndDeployCI\n'
-    moveOptions += 'Start at stepTestCI\n'
-    moveOptions += 'Start at stepDeployProduction\n'
-    moveOptions += 'Start at stepTestProduction\n'
-
-    def stepAction = askQuestion('stepBootStrap',params,moveOptions)
-
     if (stepAction['Move to'] == 'Single run stepSyncAndDeployCI') {
       stepSyncAndDeployCI()
-      interactive = false
+        interactive = false
     }
     else if(stepAction['Move to'] == 'Start at stepTestCI') {
       stepTestCI()
