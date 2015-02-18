@@ -173,6 +173,8 @@ def stepTestCI() {
 
   while (stageAction) {
 
+    interactive = false
+
     if(interactive) {
 
       //ask which tests to run
@@ -293,10 +295,10 @@ def startWatirTests(browserType,plan='plan_ci') {
       git url: watirGitUrl
 
       sh "${rvmCommand} bundle install --deployment"
-      sh "mkdir -p reports"
+      sh "rm -rf screenshots"
       sh "mkdir -p screenshots/tmp"
+      sh "mkdir -p reports"
       sh "rm -f reports/*.xml"
-      sh "rm -f screenshots/*.png"
       sh "${rvmCommand} bundle exec rake testlink:"+plan
 
       step([$class: 'JUnitResultArchiver', testResults: 'reports/*.xml'])
