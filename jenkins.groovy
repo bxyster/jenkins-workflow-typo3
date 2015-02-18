@@ -60,6 +60,8 @@ def getUserId() {
 
 def stepBootStrap() {
 
+  def stepAction = []
+
   if(interactive) {
 
     emailTo = getBuildUserMailAddress()
@@ -72,7 +74,7 @@ def stepBootStrap() {
       moveOptions += 'Start at stepDeployProduction\n'
       moveOptions += 'Start at stepTestProduction\n'
 
-      def stepAction = askQuestion('stepBootStrap',params,moveOptions)
+      stepAction = askQuestion('stepBootStrap',params,moveOptions)
   }
 
   node {
