@@ -305,7 +305,12 @@ def startWatirTests(browserType,plan='plan_ci') {
       sh "${rvmCommand} bundle exec rake testlink:"+plan
 
       step([$class: 'JUnitResultArchiver', testResults: 'reports/*.xml'])
-      step([$class: 'ArtifactArchiver', artifacts: 'screenshots/**/*.png', fingerprint: false])
+
+      try {
+        step([$class: 'ArtifactArchiver', artifacts: 'screenshots/**/*.png', fingerprint: false])
+      } catch(e) {
+        echo 'for some reason the ArtifactArchiver crashed'
+      }
     }
   }
 }
