@@ -34,7 +34,7 @@ branchName = 'master'
 StageNameCI = 'ci'
 StageNameProduction = 'production'
 watirGitUrl = ''
-emailTo = ''
+def emailTo = ''
 rvmCommand = '/var/lib/jenkins/.rvm/bin/rvm ruby-2.1.5 exec'
 
 interactive = true
@@ -61,6 +61,8 @@ def getUserId() {
 def stepBootStrap() {
 
   if(interactive) {
+
+    emailTo = getBuildUserMailAddress()
 
     def params = []
       def moveOptions = ''
@@ -90,7 +92,6 @@ def stepBootStrap() {
       developers = jenkinsConfig['developers']
       deployers = jenkinsConfig['deployers']
 
-      emailTo = getBuildUserMailAddress()
 
       StageNameCI = jenkinsConfig['stage_name_ci']
       StageNameProduction = jenkinsConfig['stage_name_production']
