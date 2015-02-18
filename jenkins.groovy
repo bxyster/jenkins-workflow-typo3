@@ -34,7 +34,7 @@ branchName = 'master'
 StageNameCI = 'ci'
 StageNameProduction = 'production'
 watirGitUrl = ''
-def emailTo = ''
+emailTo = ''
 rvmCommand = '/var/lib/jenkins/.rvm/bin/rvm ruby-2.1.5 exec'
 
 interactive = true
